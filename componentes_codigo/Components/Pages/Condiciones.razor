@@ -1,0 +1,56 @@
+﻿@page "/condiciones"
+<PageTitle>Condiciones</PageTitle>
+
+<h3>Condiciones</h3>
+<div class="mb-3 row">
+    <div class="col-sm-10">
+        Edad: <input type="number" class="form-control" id="txtNonbre" @bind="_edad" />
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col">
+        <button class="btn btn-primary" @onclick="verificaredad">Verificar</button>
+    </div>
+</div>
+
+
+@* @if (_edad < 18)
+{
+    <div class="alert alert-info">
+        <h1>Eres Menor de edad</h1>
+    </div>
+}
+
+@if (_edad > 18)
+{
+    <div class="alert alert-danger">
+        <h1>Eres Mayor de edad</h1>
+    </div>
+} *@
+
+@if (_mensaje != "")
+{
+    <div class="alert @((_edad < 18) ? "alert-info" : "alert-danger")">
+        <h1>@_mensaje</h1>
+    </div>
+} 
+@code {
+    private string _mensaje = "";
+    private int _edad = 0;
+    private void verificaredad()
+    {
+        /*
+        if(_edad >= 18)
+        {
+            _mensaje = "Eres Mayor de Edad";
+            }
+        else
+        {
+            _mensaje = "Eres Menor de Edad";
+            }
+        */
+                    _mensaje = _edad < 18 ?
+         "Eres Menor de Edad" : "Eres Mayor de Edad";
+    }
+}

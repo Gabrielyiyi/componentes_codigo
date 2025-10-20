@@ -1,0 +1,35 @@
+﻿
+@if (CodigoEstado == 200)
+{
+    <div style="color: green" class="status-container status-green">
+        <span class="status-message">Sistema Operacional</span>
+        <span class="status-code">(@CodigoEstado)</span>
+    </div>
+}
+else if (CodigoEstado == 404)
+{
+    <div style="color: yellow" class="status-container status-yellow">
+        <span class="status-message">Recurso No Encontrado</span>
+        <span class="status-code">(@CodigoEstado)</span>
+    </div>
+}
+else if (CodigoEstado == 500)
+{
+    <div style="color: red" class="status-container status-red">
+        <span class="status-message">Error Interno del Servidor</span>
+        <span class="status-code">(@CodigoEstado)</span>
+    </div>
+}
+else
+{
+    <div style="color: gray" class="status-container status-gray">
+        <span class="status-message">Estado Desconocido</span>
+        <span class="status-code">(@CodigoEstado)</span>
+    </div>
+}
+
+
+@code {
+    [Parameter]
+    public int CodigoEstado { get; set; } = 0;
+}

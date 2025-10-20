@@ -1,0 +1,57 @@
+﻿@page "/entrada"
+
+<PageTitle>Entrada</PageTitle>
+
+<h3>Captura de datos</h3>
+<div class="mb-3 row">
+    <label for="txtNonbre" class=" col-sm-2 col-form-label">Nombre</label>
+    <div class="col-sm-10">
+        <input type="text" class="form-control" id="txtNonbre" @bind="_leerNombre" />
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col">
+        <button class="btn btn-primary" @onclick="EjecutarSaludo">Saludar</button>
+    </div>
+</div>
+<Saludos Titulo="Hola que tal">
+    @_nombre
+</Saludos>
+
+<h2>Operaciones: </h2>
+<div class="mb-3 row">
+    <div class="col-sm-10">
+        Numero 1: <input type="text" class="form-control" id="txtNonbre" @bind="_numero1" />
+        Numero 2:<input type="text" class="form-control" id="txtNonbre" @bind="_numero2" />
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col">
+        <button class="btn btn-primary" @onclick="Operacion">Calcular</button>
+    </div>
+</div>
+
+<div class="row-cols-xl-6 mb-3">
+    @_resultado
+</div>
+
+@code {
+    private string _nombre = "";
+    private string _resultado = "";
+    private string _leerNombre = "";
+    private int _numero1 = 0, _numero2 = 0;
+
+    private void EjecutarSaludo()
+    {
+        _nombre = _leerNombre;
+    }
+
+    private void Operacion()
+    {
+        //_resultado = (_numero1 * (double)_numero2).ToString();
+        _resultado = ((_numero1 > _numero2) && (_numero2>= 0)).ToString();
+    }
+
+}

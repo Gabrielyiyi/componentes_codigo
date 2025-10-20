@@ -1,0 +1,54 @@
+﻿/* Estilo base para todos los contenedores de estado */
+.status-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1rem;
+}
+
+/* Estilo para el mensaje de estado */
+.status-message {
+    font-weight: 600; /* Seminegrita */
+}
+
+/* Estilo para el código de estado */
+.status-code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+/* --- ESTILOS DE COLOR --- */
+
+/* Estilo para Éxito (200 - Operacional) */
+.status-green {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+/* Estilo para Advertencia (404 - No Encontrado) */
+.status-yellow {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+}
+
+/* Estilo para Error (500 - Error del Servidor) */
+.status-red {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+/* Estilo para Desconocido/Default */
+.status-gray {
+    color: #383d41;
+    background-color: #e2e3e5;
+    border-color: #d6d8db;
+}

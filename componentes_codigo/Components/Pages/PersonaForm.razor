@@ -1,0 +1,118 @@
+﻿@page "/personaform"
+
+<h3>Formulario de Persona</h3>
+
+<EditForm Model="_persona" FormName="frmPersona" OnValidSubmit="Guardar">
+    @* Usamos OnValidSubmit para que se active con validaciones en el futuro *@
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="txtNombre" class="form-label">Nombre:</label>
+        <InputText id="txtNombre" class="form-control" @bind-Value="_persona.Nombre"></InputText>
+    </div>
+
+    <div class="mb-3">
+        <label for="txtCorreo" class="form-label">Correo:</label>
+        <InputText id="txtCorreo" class="form-control" @bind-Value="_persona.Correo"></InputText>
+    </div>
+
+    <div class="mb-3">
+        <label for="txtTelefono" class="form-label">Teléfono:</label>
+        <InputText id="txtTelefono" class="form-control" @bind-Value="_persona.Telefono"></InputText>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Género:</label>
+        <InputRadioGroup @bind-Value="_persona.Genero" class="ms-2">
+            <div class="form-check form-check-inline">
+                @* CAMBIO: El valor ahora es un miembro del enum y no un string *@
+                <InputRadio id="rdbMujer" class="form-check-input" Value="Persona.GeneroEnum.Mujer" />
+                <label for="rdbMujer" class="form-check-label">Mujer</label>
+            </div>
+            <div class="form-check form-check-inline">
+                @* CAMBIO: El valor ahora es un miembro del enum y no un string *@
+                <InputRadio id="rdbHombre" class="form-check-input" Value="Persona.GeneroEnum.Hombre" />
+                <label for="rdbHombre" class="form-check-label">Hombre</label>
+            </div>
+        </InputRadioGroup>
+        <ValidationMessage For="@(() => _persona.Genero)" />
+    </div>
+
+    <div>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="reset" class="btn btn-secondary">Cancelar</button>
+    </div>
+
+</EditForm>
+
+<hr />
+
+@if (_listaPersonas.Any())
+{
+    <h3>Personas Guardadas</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+                <th>Genero</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @*
+                CAMBIO CLAVE: La tabla ahora itera sobre la lista de personas
+                que se han guardado.
+            *@
+            @foreach (var personaGuardada in _listaPersonas)
+            {
+                <tr>
+                    <td>@personaGuardada.Nombre</td>
+                    <td>@personaGuardada.Correo</td>
+                    <td>@personaGuardada.Telefono</td>
+                    <td>@personaGuardada.Genero</td>
+                    <td>
+                        <button class="btn btn-outline-danger btn-sm"
+                                title="Eliminar"
+                                @onclick="() => eliminarPersona(personaGuardada)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    // Objeto para enlazar con el formulario actual
+    private Persona _persona = new Persona();
+
+    // Lista para almacenar todas las personas que se guarden
+    private List<Persona> _listaPersonas = new List<Persona>();
+
+    private void Guardar()
+    {
+        // 1. Crea una copia de la persona del formulario y la añade a la lista
+        _listaPersonas.Add(new Persona
+        {
+            Nombre = _persona.Nombre,
+            Correo = _persona.Correo,
+            Telefono = _persona.Telefono,
+            Genero = _persona.Genero
+        });
+
+        // 2. Resetea el objeto _persona para limpiar el formulario para una nueva entrada
+        _persona = new Persona();
+    }
+
+    private void eliminarPersona(Persona persona)
+    {
+        _listaPersonas.Remove(persona);
+    }
+}
