@@ -1,0 +1,218 @@
+﻿@page "/productosform"
+@page "/"
+
+<h3>Formulario de Productos</h3>
+
+@if (!string.IsNullOrEmpty(mensajeError))
+{
+    <div class="alert alert-danger">@mensajeError</div>
+}
+
+<EditForm Model="_producto" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="txtInventario" class="form-label">Inventario:</label>
+        <InputNumber id="txtInventario" class="form-control" @bind-Value="_producto.Inventario" />
+        <ValidationMessage For="@(() => _producto.Inventario)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="txtNombre" class="form-label">Nombre:</label>
+        <InputText id="txtNombre" class="form-control" @bind-Value="_producto.Nombre" />
+        <ValidationMessage For="@(() => _producto.Nombre)" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Departamento:</label>
+        <InputRadioGroup @bind-Value="_producto.Departamento" class="ms-2">
+            <div class="form-check form-check-inline">
+                <InputRadio id="rdbFrutas" class="form-check-input" Value="DepartamentoEnum.Frutas" />
+                <label for="rdbFrutas" class="form-check-label">Frutas</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <InputRadio id="rdbVerduras" class="form-check-input" Value="DepartamentoEnum.Verduras" />
+                <label for="rdbVerduras" class="form-check-label">Verduras</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <InputRadio id="rdbLacteos" class="form-check-input" Value="DepartamentoEnum.Lacteos" />
+                <label for="rdbLacteos" class="form-check-label">Lácteos</label>
+            </div>
+        </InputRadioGroup>
+        <ValidationMessage For="@(() => _producto.Departamento)" />
+    </div>
+
+    <div>
+        @if (!modoEdicion)
+        {
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        }
+        else
+        {
+            <button type="button" class="btn btn-success me-2" @onclick="ActualizarProducto">Actualizar</button>
+            <button type="button" class="btn btn-secondary" @onclick="CancelarEdicion">Cancelar</button>
+        }
+    </div>
+</EditForm>
+
+<hr />
+
+<div class="mt-3">
+    @if (!mostrarExistencias)
+    {
+        <button class="btn btn-info mb-3" @onclick="MostrarExistencias">Ver Existencias</button>
+    }
+    else
+    {
+        <button class="btn btn-warning mb-3" @onclick="MostrarListado">Ver Listado</button>
+    }
+</div>
+
+@if (!_listaProductos.Any())
+{
+    <p>No hay productos registrados aún.</p>
+}
+else if (!mostrarExistencias)
+{
+    <h3>Productos Guardados</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Inventario</th>
+                <th>Nombre</th>
+                <th>Departamento</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var producto in _listaProductos)
+            {
+                <tr>
+                    <td>@producto.Inventario</td>
+                    <td>@producto.Nombre</td>
+                    <td>@producto.Departamento</td>
+                    <td>
+                        <button class="btn btn-outline-warning btn-sm me-1"
+                                @onclick="() => EditarProducto(producto)">
+                            Editar
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm"
+                                @onclick="() => EliminarProducto(producto)">
+                            Eliminar
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h3>Existencias por Departamento</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Departamento</th>
+                <th>Cantidad de Productos</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var grupo in _listaProductos.GroupBy(p => p.Departamento))
+            {
+                <tr>
+                    <td>@grupo.Key</td>
+                    <td>@grupo.Count()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private Producto _producto = new Producto();
+    private List<Producto> _listaProductos = new();
+    private string mensajeError = string.Empty;
+    private bool modoEdicion = false;
+    private Producto productoEnEdicion;
+    private bool mostrarExistencias = false;
+
+    private void Guardar()
+    {
+        // Validar que no exista inventario repetido
+        if (_listaProductos.Any(p => p.Inventario == _producto.Inventario))
+        {
+            mensajeError = "⚠️ El número de inventario ya existe.";
+            return;
+        }
+
+        mensajeError = string.Empty;
+        _listaProductos.Add(new Producto
+        {
+            Inventario = _producto.Inventario,
+            Nombre = _producto.Nombre,
+            Departamento = _producto.Departamento
+        });
+
+        _producto = new Producto();
+    }
+
+    private void EliminarProducto(Producto producto)
+    {
+        _listaProductos.Remove(producto);
+    }
+
+    private void EditarProducto(Producto producto)
+    {
+        _producto = new Producto
+        {
+            Inventario = producto.Inventario,
+            Nombre = producto.Nombre,
+            Departamento = producto.Departamento
+        };
+        productoEnEdicion = producto;
+        modoEdicion = true;
+        mensajeError = string.Empty;
+    }
+
+    private void ActualizarProducto()
+    {
+        if (productoEnEdicion == null)
+            return;
+
+        // Validar que el nuevo inventario no se repita con otro producto
+        if (_listaProductos.Any(p => p != productoEnEdicion && p.Inventario == _producto.Inventario))
+        {
+            mensajeError = "⚠️ El número de inventario ya existe en otro producto.";
+            return;
+        }
+
+        productoEnEdicion.Inventario = _producto.Inventario;
+        productoEnEdicion.Nombre = _producto.Nombre;
+        productoEnEdicion.Departamento = _producto.Departamento;
+
+        modoEdicion = false;
+        productoEnEdicion = null;
+        mensajeError = string.Empty;
+        _producto = new Producto();
+    }
+
+    private void CancelarEdicion()
+    {
+        modoEdicion = false;
+        productoEnEdicion = null;
+        mensajeError = string.Empty;
+        _producto = new Producto();
+    }
+
+    private void MostrarExistencias()
+    {
+        mostrarExistencias = true;
+    }
+
+    private void MostrarListado()
+    {
+        mostrarExistencias = false;
+    }
+
+}
